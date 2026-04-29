@@ -1,0 +1,13 @@
+.env
+.DS_Store
+work/
+downloads/
+svg-original/
+svg-themed/
+png-themed/
+contact-sheet.png
+*.token
+*.key
+*.log
+__pycache__/
+*.pyc
