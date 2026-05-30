@@ -2,12 +2,13 @@
 
 Small utility repo for building a local icon asset pack from Icons8 Liquid Glass.
 
-It does four things:
+It does five things:
 
-1. Maps app icon names to Icons8 search queries.
-2. Resolves each query through the Icons8 MCP search endpoint.
-3. Downloads paid SVG masters using your own Icons8 paid account key.
-4. Recolors the white Liquid Glass SVG gradients into an app palette and renders PNGs.
+1. Crawls Icons8 style/category pages into a full icon manifest.
+2. Maps app icon names to Icons8 search queries when you only need app-specific icons.
+3. Resolves each query through the Icons8 MCP search endpoint.
+4. Downloads paid SVG masters using your own Icons8 paid account key.
+5. Recolors the white Liquid Glass SVG gradients into an app palette and renders PNGs.
 
 No Icons8 assets, login cookies, paid tokens, or account data are included.
 
@@ -71,7 +72,37 @@ brew install librsvg
 
 ## Workflow
 
-Start from a CSV:
+For full style/category pages, start from Icons8 URLs:
+
+```text
+https://icons8.com/icons/glassmorphism
+https://icons8.com/icons/set/business--style-glassmorphism
+https://icons8.com/icons/set/science--style-glassmorphism
+```
+
+Build a manifest from the page payloads:
+
+```bash
+python3 scripts/icons8_pipeline.py page-manifest \
+  --urls-file work/icons8-pages.txt \
+  --out work/page-manifest.csv \
+  --json-out work/page-manifest.json
+```
+
+The root style page, such as `/icons/glassmorphism`, expands to linked set pages. Category pages are parsed from Icons8 `__NUXT_DATA__`, not search results or JSON-LD snippets, so the manifest includes the full page inventory.
+
+Download every manifest SVG:
+
+```bash
+python3 scripts/icons8_pipeline.py download-manifest \
+  --manifest work/page-manifest.csv \
+  --out work/svg-original \
+  --resolved work/resolved-page-icons.csv \
+  --failed work/failed-page-icons.csv \
+  --workers 2
+```
+
+For app-specific packs, start from a CSV:
 
 ```csv
 asset_key,icons8_query,sf_symbols

@@ -19,6 +19,25 @@ Symbols are collapsed into semantic asset keys. For example:
 
 This avoids downloading multiple nearly identical Icons8 files for one app concept.
 
+## Icons8 Page Manifests
+
+Full style/category packs should be discovered from the Icons8 pages themselves.
+The page command fetches each URL, expands a root style page such as
+`/icons/glassmorphism` into its linked `/icons/set/*--style-glassmorphism`
+pages, and parses the category page `__NUXT_DATA__` payload.
+
+This matters because Icons8 JSON-LD only lists the first visible page slice, and
+search results can return repeated or unrelated icons. The Nuxt payload contains
+the real category/subcategory icon inventory, including icon IDs and canonical
+icon URLs. Output filenames are generated as:
+
+```text
+<category>--style-<style>__<slug>.svg
+```
+
+The manifest command checks that two different Icons8 IDs do not map to the same
+output filename before any download begins.
+
 ## Icons8 Search
 
 Search uses Icons8 MCP over JSON-RPC:
