@@ -1,17 +1,29 @@
-# Repository guide
+# Repository Guide
 
-- Read `README.md` and the task-relevant source before editing.
-- Follow `SECURITY.md` for its relevant workflow.
-- Discover build and test commands from the current manifests, scripts, and documentation; do not invent commands or treat historical results as current.
+## Purpose and boundaries
 
-## Working guidance — GPT-6 Astra
+This repository builds reviewed icon packs from Icons8 content that the operator is entitled to use. It must not be described or used as an access-control bypass. Do not add cookies, account data, API keys, or private manifests to source control. Add assets only when their licence and repository visibility permit it.
 
-Based on [OpenAI's Astra prompting guidance](https://developers.openai.com/api/docs/guides/latest-model#prompting-best-practices), reviewed 2026-09-19. These are working instructions, not a change to model or API settings.
+Read [README.md](README.md), [SECURITY.md](SECURITY.md), and the relevant script before changing behavior. Keep source changes small and preserve unrelated work. Use bounded delegation for independent work when useful.
 
-- Complete the authorized task through implementation and relevant verification. Make routine choices yourself; ask only when a missing decision materially changes the result or requires new authority. Prepare reviewable work before requesting any necessary final approval.
-- Current user instructions take precedence over repository and skill guidance within system and tool constraints. Preserve explicit exclusions and owner holds. Historical plans and session notes do not grant current authorization. If a file or skill blocks progress, identify its exact path and rule.
-- Keep changes small and practical. Inspect current source and Git status, preserve unrelated work, and use existing conventions. Do not add speculative abstractions, dependencies, or unrelated cleanup. Commit, push, deploy, install, and live-service changes require authorization for that action.
-- Use the reasoning effort the task needs. Follow explicit project delegation rules; otherwise use subagents only when requested, with bounded independent tasks and distinct file ownership. Batch independent reads; serialize dependent operations and conflicting edits.
-- Run meaningful checks for the changed behavior and required project gates. Avoid tests that merely repeat low-impact edits. Broaden or repeat verification only after changes, failures, or unresolved concerns. Distinguish local checks from device, browser, and live-service evidence.
-- Write concise, plain, outcome-first updates. State what changed, why, verification, and material gaps. Avoid filler and unnecessary formatting.
-- Keep durable instructions in AGENTS.md and maintained product documentation. Do not create duplicate assistant instruction files or disposable plans, transcripts, status reports, and screenshots in source directories unless requested. Preserve source, tests, fixtures, assets, licences, and operational evidence regardless of who created them.
+## Commands
+
+Run the fixture suite for page parsing or manifest naming changes:
+
+```bash
+python3 -B -m unittest discover -s tests -v
+```
+
+Use the syntax check and targeted validation guidance in [CONTRIBUTING.md](CONTRIBUTING.md) for other changes. Complete the relevant checks and state any behavior left unverified.
+
+Run the test command only in an environment that already has the packages declared in `requirements.txt`. Do not run authenticated download commands with someone else's credentials. Review output files before sharing them.
+
+`scripts/icons8_pipeline.py` provides the asset workflow. `scripts/discover_swiftui_symbols.py` produces candidate queries from Swift source. Review matches visually and add overrides where needed before release use.
+
+## Documentation and validation
+
+Keep `LICENSE`, `license.md`, and `TRADEMARKS.md` consistent. The MIT license applies to this repository's tooling, not to Icons8 assets or marks. Keep security guidance aligned with the actual credential flow and generated-file handling.
+
+Keep commits, pushes, deployments, installs, and live-service changes within the user's authorized scope. Use existing authorization for necessary implied steps without asking again.
+
+For dependency-oriented work, consider [Clean Development](https://github.com/magrathean-uk/clean-development) to keep managed caches outside the checkout.

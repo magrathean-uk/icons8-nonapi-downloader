@@ -1,125 +1,62 @@
-# How It Works
+# How the pipeline works
 
-## Discovery
+The two scripts are local command-line tools. `discover_swiftui_symbols.py` reads Swift files and writes candidate CSVs. `icons8_pipeline.py` handles page manifests, search, downloads, theming, rendering, and contact sheets. See the [README](../README.md) for complete command examples.
 
-The app is scanned for SwiftUI/SF Symbol entry points:
+## Page manifests
 
-- `Image(systemName:)`
-- `Label(..., systemImage:)`
-- `Tab(..., systemImage:)`
-- `ContentUnavailableView(..., systemImage:)`
-- wrapper calls that pass `systemImage`
-- simple icon helper functions returning SF Symbol strings
+`page-manifest` normalizes input URLs to HTTPS on `icons8.com`, dropping queries and fragments. Root style pages expand to matching `/icons/set/<category>--style-<style>` links. `--no-expand-root` is useful with set-page inputs; it does not make a root page directly parseable.
 
-Symbols are collapsed into semantic asset keys. For example:
+Set pages are parsed from the `__NUXT_DATA__` script. The parser tries `categoryData` first, then `iconsData` if the first path raises a runtime error. It records the icons present in those structures, rather than validating the provider's entire catalogue. Website changes can break discovery or change the inventory.
 
-- `car.fill`, `car.circle` -> `lg_car`
-- `map`, `map.fill` -> `lg_map`
-- `bolt`, `bolt.fill`, `bolt.circle.fill` -> `lg_lightning_bolt`
-
-This avoids downloading multiple nearly identical Icons8 files for one app concept.
-
-## Icons8 Page Manifests
-
-Full style/category packs should be discovered from the Icons8 pages themselves.
-The page command fetches each URL, expands a root style page such as
-`/icons/glassmorphism` into its linked `/icons/set/*--style-glassmorphism`
-pages, and parses the category page `__NUXT_DATA__` payload.
-
-This matters because Icons8 JSON-LD only lists the first visible page slice, and
-search results can return repeated or unrelated icons. The Nuxt payload contains
-the real category/subcategory icon inventory, including icon IDs and canonical
-icon URLs. Output filenames are generated as:
+Manifest columns are:
 
 ```text
-<category>--style-<style>__<slug>.svg
+source_url,category,style,subcategory_code,subcategory_name,icons8_id,name,common_name,slug,asset_key,icon_url
 ```
 
-The manifest command checks that two different Icons8 IDs do not map to the same
-output filename before any download begins.
+Output stems use `<category>--style-<style>__<slug>`. The slug usually comes from the icon URL, falling back to common name or ID. Duplicate `(asset_key, icons8_id)` rows are removed. Conflicting names are disambiguated using common names and, when needed, IDs; a final check rejects any remaining key owned by different IDs. Naming is repeatable for the same ordered input, not a promise that live page results stay fixed.
 
-## Icons8 Search
+## Search and overrides
 
-Search uses Icons8 MCP over JSON-RPC:
+`download` reads `asset_key` and `icons8_query`, plus optional `sf_symbols`. Without an override, it calls `search_icons` through JSON-RPC at `https://mcp.icons8.com/mcp/`, requesting platform `liquid-glass` and five results by default.
 
-```json
-{
-  "jsonrpc": "2.0",
-  "method": "tools/call",
-  "params": {
-    "name": "search_icons",
-    "arguments": {
-      "query": "car",
-      "platform": "liquid-glass",
-      "amount": 5
-    }
-  }
-}
-```
+Each result scores 10 points for the Liquid Glass platform, 2 for a colour icon, and 3 per query token found in its name, common name, category, or subcategory. The highest score wins; ties keep the first result. Scoring does not guarantee semantic correctness or strictly exclude another platform.
 
-The first result is not always right. The script scores results by:
+An override with `asset_key` and `icons8_id` bypasses search. Optional `icons8_name` and `icons8_common_name` are copied into the report. Review overrides visually rather than assuming a stable ID proves suitability.
 
-- exact Liquid Glass platform
-- color icon
-- query tokens appearing in name/common name/category/subcategory
+## Downloads and reports
 
-For production use, keep an override map for known weak matches.
+Both download routes send the environment key as the `token` query parameter to `https://api-img.icons8.com/`, with `format=svg`, `fromSite=true`, and a requested size. The query route requests size 512; the manifest route exposes `--size`, defaulting to 512.
 
-## Paid SVG Download
+Responses are accepted when their bytes contain `<svg`. This is not SVG sanitization. Files are written as `<asset_key>.svg`; input keys are not constrained to a safe directory by a dedicated path validator. Use only reviewed CSVs and trusted SVGs. See [security and data handling](security.md).
 
-Public PNG preview works with MCP:
+The query route runs sequentially and pauses after each row. The manifest route defaults to one worker, can run concurrently, and pauses after successful downloads. Both default pauses are 0.08 seconds; this is pacing, not rate-limit handling. There is no retry, resume, or skip-existing mechanism.
 
-```text
-https://img.icons8.com/?id=<ICON_ID>&format=png&size=512
-```
+Successes and failures are recorded separately. Download failures do not roll back successful files. Both commands return status 1 if a row failed. Reports contain asset names, local output paths, and potentially unredacted error text. Manifest reports preserve the input columns; query reports include the chosen icon's ID and labels.
 
-Paid SVG needs the website download endpoint:
+## Swift discovery
 
-```text
-https://api-img.icons8.com/?id=<ICON_ID>&format=svg&size=512&fromSite=true&token=<PUBLIC_API_KEY>
-```
+The scanner recursively reads `*.swift`. It looks for quoted strings on lines containing `systemName:`, `systemImage:`, or `icon:`, and in certain icon-named helper bodies. Heuristics filter strings, and a manual mapping converts known symbols into search queries. Other names are simplified by removing suffixes and replacing separators.
 
-The `PUBLIC_API_KEY` comes from the signed-in Icons8 account. The script supports:
+Symbols mapping to the same query share an `lg_` asset key. The detailed CSV contains `sf_symbol,asset_key,icons8_query,refs`, with up to eight sorted references per symbol. The grouped query CSV contains `asset_key,icons8_query,sf_symbols`. Dynamic expressions and multiline source patterns can be missed; false positives remain possible.
 
-- `ICONS8_PUBLIC_API_KEY` environment variable
-- macOS Chrome local extraction with `token-from-chrome`
+## Theming and rendering
 
-The Chrome helper:
+`theme` processes only top-level `*.svg` files. For white gradient stops written in the recognized attribute form, `stop-opacity` selects the replacement colour:
 
-1. Reads Chrome's encrypted Cookies database.
-2. Uses macOS Keychain item `Chrome Safe Storage`.
-3. Decrypts only Icons8 cookies.
-4. Extracts `publicApiKey` from the `i8token` JWT payload.
-5. Prints only an `export ICONS8_PUBLIC_API_KEY=...` command.
+| Opacity | Colour |
+| --- | --- |
+| At least 0.64 | `#F8FBFF` |
+| At least 0.54, below 0.64 | `#6BD8FF` |
+| At least 0.40, below 0.54 | `#20D7E8` |
+| Below 0.40 | `#1A26FF` |
 
-No raw session cookie is stored.
+It also replaces selected `#999` and `#4c4c4c` fills and strokes, and changes literal 48px width/height attributes to 512px. These regex substitutions do not cover every valid SVG syntax or colour style.
 
-## Theming
+`render` calls `rsvg-convert` for each top-level SVG, requesting equal width and height, default 512. Existing PNG names are overwritten. It does not create an iOS asset catalogue or multiple scale variants.
 
-Icons8 Liquid Glass SVGs are often white-only gradient icons:
+`contact-sheet` uses Pillow, with 72px thumbnails and eight columns by default. It reads the resolved CSV in order, opens a matching PNG for each asset key, and draws shortened labels on a dark background. It requires nonempty input and does not skip missing PNGs.
 
-```xml
-<stop stop-color="#fff" stop-opacity=".7"/>
-<stop stop-color="#fff" stop-opacity=".45"/>
-```
+## Validation boundary
 
-The theme step maps opacity bands to palette colors:
-
-- high opacity -> near-white highlight
-- medium opacity -> ice blue
-- lower opacity -> cyan
-- very low opacity -> primary blue
-
-This preserves the glass structure while making icons match the app theme.
-
-## Rendering
-
-SVGs are kept as source masters.
-
-PNGs are generated with `rsvg-convert` for runtime reliability:
-
-```bash
-rsvg-convert -w 512 -h 512 input.svg > output.png
-```
-
-For iOS asset catalogs, generate `@1x`, `@2x`, and `@3x` from the themed SVG masters.
+The five tests in `tests/test_icons8_pages.py` exercise synthetic Nuxt payloads, root-page link filtering, and filename collisions. They do not validate account access, current Icons8 service behavior, Chrome cookie compatibility, Swift discovery, or rendered appearance. Use the checks in [CONTRIBUTING.md](../CONTRIBUTING.md) for changes, and report separately what was checked locally and what was observed live.
