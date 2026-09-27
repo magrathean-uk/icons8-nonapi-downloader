@@ -1,10 +1,10 @@
-# License and Third-Party Notice
+# Third-party notices
 
 ## This repository
 
-The scripts and documentation in this repository are licensed under the [MIT License](./LICENSE).
+The scripts and documentation in this repository are licensed under the [MIT License](../../LICENSE).
 
-Copyright © 2026 Magrathean UK Ltd.
+Copyright (c) 2026 MAGRATHEAN UK LTD
 
 The root `LICENSE` is the controlling license text.
 
@@ -23,4 +23,4 @@ This repository does not vendor their source, pin an exact resolved version, or 
 
 The MIT License covers this repository's tooling. It does not grant any right to Icons8 artwork, services, accounts, tokens, or marks.
 
-No Icons8 SVG files, PNG icons, paid API tokens, session cookies, or generated asset packs are included in this repository. Obtain assets only through an account and terms that authorize the intended use. Consult the [Icons8 licensing information](https://icons8.com/license) and the terms attached to your assets. See [TRADEMARKS.md](./TRADEMARKS.md) for the project trademark notice.
+No Icons8 SVG files, PNG icons, paid API tokens, session cookies, or generated asset packs are included in this repository. Obtain assets only through an account and terms that authorize the intended use. Consult the [Icons8 licensing information](https://icons8.com/license) and the terms attached to your assets. See [trademarks](trademarks.md) for the project trademark notice, and [NOTICE](../../NOTICE) for the unofficial-tool statement.

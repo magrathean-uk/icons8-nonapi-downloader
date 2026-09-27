@@ -6,7 +6,7 @@ Contribute only material you have the right to share under this repository's MIT
 
 ## Local checks
 
-Follow the [README setup](README.md#setup). From the repository root, the fixture suite is:
+Follow the [README setup](../README.md#setup). From the repository root, the fixture suite is:
 
 ```bash
 python3 -B -m unittest discover -s tests -v
@@ -30,6 +30,6 @@ Documentation changes need command, link, and consistency checks; a documentatio
 
 ## Review before sharing
 
-Use synthetic CSVs and redact private paths and error text. Keep generated packs in `work/`. Check the actual diff: `.gitignore` does not exclude every SVG, PNG, CSV, or virtual environment location. Preserve the [MIT licence](LICENSE), existing attribution, and [third-party notices](license.md).
+Use synthetic CSVs and redact private paths and error text. Keep generated packs in `work/`. Check the actual diff: `.gitignore` does not exclude every SVG, PNG, CSV, or virtual environment location. Preserve the [MIT licence](../LICENSE), existing attribution, and [third-party notices](../docs/legal/third-party-notices.md).
 
-Agent-specific boundaries and commands are in [AGENTS.md](AGENTS.md).
+Agent-specific boundaries and commands are in [AGENTS.md](../AGENTS.md).

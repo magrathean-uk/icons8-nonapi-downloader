@@ -1,16 +1,36 @@
-# Icons8 Licensed Asset Pipeline
+<h1 align="center">icons8-nonapi-downloader</h1>
 
-Build a local, reviewed icon pack from Icons8 Liquid Glass assets: discover icons, download SVG masters, apply a fixed blue palette, render PNGs, and inspect a contact sheet. An optional scanner turns SF Symbol references in Swift source into candidate search queries.
+<p align="center">Build a local, reviewed icon pack from Icons8 Liquid Glass assets, using your own Icons8 account.</p>
 
-This repository contains tooling and example CSVs, not Icons8 artwork or account credentials. It is independent of Icons8. Despite the repository name, the downloader makes network requests to Icons8's MCP search service and website image endpoint.
+<p align="center">
+  <a href="docs/how-it-works.md">Documentation</a>
+</p>
+
+## Overview
+
+icons8-nonapi-downloader discovers, downloads, recolours and renders Icons8 Liquid Glass icons into a local pack, then builds a contact sheet for review. An optional scanner turns SF Symbol references in Swift source into candidate search queries. The repository ships tooling and example CSVs only: no Icons8 artwork or account credentials are included.
+
+## Unofficial tool
+
+icons8-nonapi-downloader is unofficial and independent. It is not affiliated with, endorsed by or supported by Icons8. It downloads assets using endpoints Icons8's own website uses internally, not Icons8's published API product, and these endpoints may stop working at any time without notice. You are responsible for holding your own authorised Icons8 account and complying with Icons8's Terms of Service and asset licences (see [icons8.com/license](https://icons8.com/license)). This tool grants no rights in Icons8 content.
 
 ## Before you start
 
-Use an account you control and download only assets your account and the applicable Icons8 terms permit. The software's MIT licence does not license downloaded artwork. Prefer official export or API tooling when it meets your needs; review asset attribution, modification, redistribution, and download limits separately. See [licensing and third-party notices](license.md).
+Use an account you control and download only assets your account and the applicable Icons8 terms permit. This repository's MIT licence does not license downloaded artwork. Prefer official export or API tooling when it meets your needs; review asset attribution, modification, redistribution, and download limits separately. See [third-party notices](docs/legal/third-party-notices.md).
 
 The page parser depends on Icons8's website data format, and search matches need human review. It cannot guarantee a complete current catalogue or continued endpoint compatibility.
 
-## Setup
+## Features
+
+- Discover icons by application query or by an Icons8 category/style page.
+- Download SVG masters through the search or manifest workflow.
+- Apply a fixed blue palette and render PNGs at a chosen size.
+- Build a contact sheet to review a downloaded pack.
+- Scan Swift source for SF Symbol references and turn them into candidate search queries.
+
+## Getting started
+
+### Setup
 
 Run commands from the repository root. Python 3.11 is the version configured in the existing dependency workflow. The Python dependencies are `cryptography` and `Pillow`.
 
@@ -28,7 +48,7 @@ brew install librsvg
 
 Keep the virtual environment out of commits; `.venv/` is not currently listed in this repository's `.gitignore`.
 
-## Authentication
+### Authentication
 
 Downloads read an account-holder key from the environment. Supply your own value locally:
 
@@ -40,7 +60,7 @@ The script does not load `.env` files. Treat the key as a secret, including in s
 
 An optional `token-from-chrome` command reads the current macOS user's Chrome Default profile and Keychain to extract the account's `publicApiKey`. It prints a shell export containing the key. Use it only when you intend to access your own browser credentials, after reading the [data-handling details](docs/security.md). It is not required when the environment variable is already set.
 
-## Download by application query
+### Download by application query
 
 Review [the query example](examples/asset-queries.example.csv), then run:
 
@@ -62,7 +82,7 @@ The downloader ranks up to five search results by default. A reviewed override b
 
 [Override rows](examples/overrides.example.csv) require `asset_key` and `icons8_id`; `icons8_name` and `icons8_common_name` supply labels. The included IDs illustrate the format, not an approved pack for your application.
 
-## Download by category or style page
+### Download by category or style page
 
 Create a manifest before downloading:
 
@@ -84,7 +104,7 @@ Repeat `--url` for multiple pages, or use `--urls-file` with one URL per nonblan
 
 Both download commands write resolved and failed CSVs and exit with status 1 if any rows fail. They overwrite matching output filenames and do not resume or retry automatically. Inspect failures before rerunning; rerunning the original input downloads successful rows again. Keep concurrency low and respect provider limits.
 
-## Theme, render, and review
+### Theme, render, and review
 
 After either download route, use the matching resolved CSV:
 
@@ -106,7 +126,7 @@ python3 scripts/icons8_pipeline.py contact-sheet \
 
 The theme is a fixed set of colour substitutions, not a configurable palette. Keep original SVGs for comparison. The contact sheet needs at least one resolved row and a matching PNG for every row. Inspect the actual images and licences before putting a pack into an application.
 
-## Discover SF Symbols in Swift source
+### Discover SF Symbols in Swift source
 
 ```bash
 python3 scripts/discover_swiftui_symbols.py \
@@ -117,14 +137,18 @@ python3 scripts/discover_swiftui_symbols.py \
 
 This is a regex scan, not a Swift parser. It can miss dynamic symbols and include unrelated strings. Review the generated queries, then pass `work/asset-queries.csv` to `download`. The detailed symbol report includes source paths and line references; keep private project details local.
 
-## Development and help
+## Documentation
 
-See [how it works](docs/how-it-works.md), [contribution and validation guidance](CONTRIBUTING.md), and [troubleshooting](SUPPORT.md). The existing tests cover page parsing and manifest naming with synthetic fixtures; they do not prove live downloads or visual quality.
+- [How it works](docs/how-it-works.md) — pipeline internals: endpoints, parsing, scoring.
+- [Security and secret hygiene](docs/security.md) — keeping keys, cookies and generated files out of the repository.
+- [Security policy](.github/SECURITY.md) — vulnerability reporting.
+- [Contributing](.github/CONTRIBUTING.md)
+- [Support](.github/SUPPORT.md)
 
-Keep generated content under `work/`, which Git ignores. SVGs and PNGs elsewhere are not globally ignored. Review reports and error output before sharing them. Follow [SECURITY.md](SECURITY.md) for vulnerability reports and [secret hygiene](docs/security.md) for local use.
+Keep generated content under `work/`, which Git ignores. SVGs and PNGs elsewhere are not globally ignored. Review reports and error output before sharing them. The existing tests cover page parsing and manifest naming with synthetic fixtures; they do not prove live downloads or visual quality.
 
-## Licence and trademarks
+## Licence
 
-The tooling is licensed under the [MIT License](LICENSE), copyright (c) 2026 Magrathean UK Ltd. [Third-party notices](license.md) distinguish software dependencies from downloaded artwork. See [TRADEMARKS.md](TRADEMARKS.md) for the existing trademark notice.
+icons8-nonapi-downloader is open source under the MIT licence. See [LICENSE](LICENSE) and [NOTICE](NOTICE). Third-party dependency and Icons8 notices are in [docs/legal/third-party-notices.md](docs/legal/third-party-notices.md) and [docs/legal/trademarks.md](docs/legal/trademarks.md). Contributions: see [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md).
 
-This project is not affiliated with, endorsed by, sponsored by, or supported by Icons8.
+<sub>© 2026 MAGRATHEAN UK LTD · [Legal](https://github.com/magrathean-uk/.github/blob/main/LEGAL.md)</sub>

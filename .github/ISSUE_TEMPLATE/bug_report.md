@@ -6,7 +6,7 @@ labels: ''
 assignees: ''
 ---
 
-For vulnerabilities, use SECURITY.md. Do not include keys, cookies, paid artwork, private project paths, or unredacted response bodies.
+For vulnerabilities, use .github/SECURITY.md. Do not include keys, cookies, paid artwork, private project paths, or unredacted response bodies.
 
 ## What happened
 

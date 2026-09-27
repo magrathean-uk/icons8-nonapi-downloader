@@ -59,4 +59,4 @@ It also replaces selected `#999` and `#4c4c4c` fills and strokes, and changes li
 
 ## Validation boundary
 
-The five tests in `tests/test_icons8_pages.py` exercise synthetic Nuxt payloads, root-page link filtering, and filename collisions. They do not validate account access, current Icons8 service behavior, Chrome cookie compatibility, Swift discovery, or rendered appearance. Use the checks in [CONTRIBUTING.md](../CONTRIBUTING.md) for changes, and report separately what was checked locally and what was observed live.
+The five tests in `tests/test_icons8_pages.py` exercise synthetic Nuxt payloads, root-page link filtering, and filename collisions. They do not validate account access, current Icons8 service behavior, Chrome cookie compatibility, Swift discovery, or rendered appearance. Use the checks in [CONTRIBUTING.md](../.github/CONTRIBUTING.md) for changes, and report separately what was checked locally and what was observed live.

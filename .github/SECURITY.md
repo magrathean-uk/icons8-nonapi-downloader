@@ -14,7 +14,7 @@ Do not publish credentials, private keys, database dumps, signing certificates, 
 
 ## Scope and Safe Harbour
 
-Magrathean UK Ltd. will not pursue a good-faith researcher for security disclosures that:
+MAGRATHEAN UK LTD will not pursue a good-faith researcher for security disclosures that:
 
 - Target non-production test systems or researcher-owned environments;
 - Avoid persistence, destructive changes, denial of service, and access to personal or customer data;

@@ -1,0 +1,11 @@
+icons8-nonapi-downloader
+Copyright © 2026 MAGRATHEAN UK LTD
+
+Licensed under the MIT License. See LICENSE.
+
+icons8-nonapi-downloader is an unofficial, independent tool. It is not affiliated with,
+endorsed by or supported by Icons8. It downloads assets using endpoints Icons8's own
+website uses internally, not Icons8's published API product, and these endpoints may
+stop working at any time without notice. You are responsible for holding your own
+authorised Icons8 account and complying with Icons8's Terms of Service and asset
+licences (see icons8.com/license). This tool grants no rights in Icons8 content.

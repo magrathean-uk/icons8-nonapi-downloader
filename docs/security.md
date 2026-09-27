@@ -33,4 +33,4 @@ Review generated files for private asset names and licensed content. A local tex
 rg -n "i8token|publicApiKey|Bearer|eyJ|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+|ICONS8_PUBLIC_API_KEY" .
 ```
 
-For vulnerability reports, follow the repository [security policy](../SECURITY.md).
+For vulnerability reports, follow the repository [security policy](../.github/SECURITY.md).

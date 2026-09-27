@@ -15,4 +15,4 @@ For a reproducible tooling problem, open an [issue](https://github.com/magrathea
 | Contact sheet fails | Check that the resolved CSV is nonempty and every row has a matching PNG in `--png-dir`. |
 | Old icons appear in rendered output | Theme and render scan the whole input folder. Use a fresh folder for each pack. |
 
-Read [how it works](docs/how-it-works.md) for file formats and limitations. Download success does not establish that an icon is the right match, visually correct, or licensed for your intended use.
+Read [how it works](../docs/how-it-works.md) for file formats and limitations. Download success does not establish that an icon is the right match, visually correct, or licensed for your intended use.
