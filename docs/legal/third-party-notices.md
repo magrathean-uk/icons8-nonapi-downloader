@@ -12,8 +12,8 @@ The root `LICENSE` is the controlling license text.
 
 `requirements.txt` currently declares:
 
-- `cryptography>=42`
-- `Pillow>=10`
+- `cryptography>=50.0.1,<51` (PyPI metadata for 50.0.1: `Apache-2.0 OR BSD-3-Clause`)
+- `Pillow>=12.3.0,<13` (PyPI metadata for 12.3.0: `MIT-CMU`)
 
 Those packages are third-party software under their own terms. See the upstream [cryptography license files](https://github.com/pyca/cryptography/blob/main/LICENSE), [Pillow license information](https://pillow.readthedocs.io/en/stable/about.html#license), and [librsvg documentation and licence information](https://gnome.pages.gitlab.gnome.org/librsvg/Rsvg-2.0/) for the separately installed `rsvg-convert` renderer used by this project.
 
