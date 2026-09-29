@@ -11,3 +11,4 @@ contact-sheet.png
 *.log
 __pycache__/
 *.pyc
+.venv/
