@@ -60,7 +60,9 @@ def chrome_public_api_key() -> str:
         from cookies
         where host_key like '%icons8%'
     """
-    for _host, name, encrypted in sqlite3.connect(cookie_db).execute(query):
+    # Open the browser's cookie database read-only so it is never created or modified.
+    cookie_conn = sqlite3.connect(f"{cookie_db.as_uri()}?mode=ro", uri=True)
+    for _host, name, encrypted in cookie_conn.execute(query):
         data = encrypted[3:] if encrypted.startswith(b"v10") else encrypted
         decryptor = Cipher(algorithms.AES(key), modes.CBC(iv)).decryptor()
         decoded = decryptor.update(data) + decryptor.finalize()
@@ -73,6 +75,7 @@ def chrome_public_api_key() -> str:
             cookies[name] = decoded.decode()
         except UnicodeDecodeError:
             continue
+    cookie_conn.close()
 
     token = cookies.get("i8token")
     if not token:

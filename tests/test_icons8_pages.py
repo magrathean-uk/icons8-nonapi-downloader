@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import sqlite3
+import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -175,6 +178,21 @@ class Icons8PageTests(unittest.TestCase):
                 "popular--style-glassmorphism__share--v1",
             ],
         )
+
+    def test_chrome_key_lookup_opens_cookie_database_read_only(self) -> None:
+        with tempfile.TemporaryDirectory() as home:
+            profile = Path(home) / "Library/Application Support/Google/Chrome/Default"
+            profile.mkdir(parents=True)
+            cookie_db = profile / "Cookies"
+
+            with (
+                mock.patch.object(pipeline.Path, "home", return_value=Path(home)),
+                mock.patch.object(pipeline.subprocess, "check_output", return_value="placeholder\n"),
+            ):
+                with self.assertRaises(sqlite3.OperationalError):
+                    pipeline.chrome_public_api_key()
+
+            self.assertFalse(cookie_db.exists())
 
 
 if __name__ == "__main__":
