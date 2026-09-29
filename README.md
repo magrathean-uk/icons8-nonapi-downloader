@@ -46,6 +46,8 @@ Rendering also needs `rsvg-convert` on `PATH`. On macOS with Homebrew:
 brew install librsvg
 ```
 
+On a machine that follows [Clean Development](https://github.com/magrathean-uk/clean-development), run the install and test commands through `clean-development run --session session-only -- <command>` so caches stay outside `~`. See [AGENTS.md](AGENTS.md#clean-development-mandatory).
+
 Keep the virtual environment out of commits; `.venv/` is not currently listed in this repository's `.gitignore`.
 
 ### Authentication
