@@ -1,2 +1,2 @@
-cryptography>=50.0.1,<51
+cryptography>=50.0.2,<51
 Pillow>=12.3.0,<13
